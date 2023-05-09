@@ -51,7 +51,7 @@ struct node* insert(struct node* node, int key)
     return node;
 }
 
-// Function to do inorder traversal of BST, printing keys and size at each node
+// Function to do inorder traversal of BST, printing key and size at each node
 void inorderPrint(struct node* root)
 {
     if (root != NULL)
@@ -95,6 +95,15 @@ int main()
 
     // Inserting value 80
     insert(root, 80);
+
+    //inserting even more shit
+    insert(root, 90);
+    insert(root, 100);
+    insert(root, 110);
+    insert(root, 5);
+    insert(root, 105);
+    insert(root, 10);
+    insert(root, 120);
 
     // Print the BST
     inorderPrint(root);
