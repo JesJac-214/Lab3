@@ -6,7 +6,7 @@
 #include <cmath>
 using namespace std;
 
-int c = 0.75;
+int c = 0.55;
 
 // Given Node
 struct node
