@@ -6,7 +6,7 @@
 #include <cmath>
 using namespace std;
 
-int c = 0.55;
+double c = 0.55;
 
 // Given Node
 struct node
@@ -62,6 +62,22 @@ void inorderPrint(struct node* root)
     }
 }
 
+bool sizeCheck(struct node* x) { // checks if given node x has either child too big, and returns either true or false
+    cout << "Inspecting node with key value " << x->key << endl;
+    if (x->left->size > (c * x->size)) {
+        cout << "Left child subtree at node value " << x->left->key << " is too big!" << endl;
+        return true;
+    }
+    if (x->right->size > (c * x->size)) {
+        cout << "Right child subtree at node value " << x->right->key << " is too big!" << endl;
+        return true;
+    }
+    else {
+        cout << "All good here" << endl;
+        return false;
+    }
+}
+
 // Driver Code
 int main()
 {
@@ -103,11 +119,11 @@ int main()
     insert(root, 5);
     insert(root, 105);
     insert(root, 10);
-    insert(root, 120);
 
     // Print the BST
     inorderPrint(root);
-
+    sizeCheck(root);
+    sizeCheck(root->right);
     return 0;
 }
 
