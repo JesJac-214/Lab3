@@ -120,10 +120,12 @@ int main()
     insert(root, 105);
     insert(root, 10);
 
-    // Print the BST
+    cout << "Current c value: " << c << endl;
     inorderPrint(root);
+    // test samples of size check
     sizeCheck(root);
     sizeCheck(root->right);
+    sizeCheck(root->left->left);
     return 0;
 }
 
