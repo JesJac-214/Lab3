@@ -1,4 +1,4 @@
-// copied and modified from https://www.geeksforgeeks.org/introduction-to-binary-search-tree-data-structure-and-algorithm-tutorials/
+// Most basics copied and modified from https://www.geeksforgeeks.org/introduction-to-binary-search-tree-data-structure-and-algorithm-tutorials/
 
 // C++ program to insert a node
 // in a BST
@@ -45,6 +45,38 @@ bool sizeCheck(struct node* x) {
     }
 }
 
+// Taken from https://www.geeksforgeeks.org/binary-search-tree-set-1-search-and-insertion/
+// C function to search a given key in a given BST
+struct node* search(struct node* root, int key)
+{
+    // Base Cases: root is null or key is present at root
+    if (root == NULL || root->key == key)
+        return root;
+
+    // Key is greater than root's key
+    if (root->key < key)
+        return search(root->right, key);
+
+    // Key is smaller than root's key
+    return search(root->left, key);
+}
+
+//copy of search with sizeCheck in it, for use when inspecting an insertion path by searching for the newly inserted key
+struct node* searchPathSizeCheck(struct node* root, int key)
+{
+    sizeCheck(root);
+    // Base Cases: root is null or key is present at root
+    if (root == NULL || root->key == key)
+        return root;
+
+    // Key is greater than root's key
+    if (root->key < key)
+        return searchPathSizeCheck(root->right, key);
+
+    // Key is smaller than root's key
+    return searchPathSizeCheck(root->left, key);
+}
+
 // Function to insert a new node with
 // given key in BST
 struct node* insert(struct node* node, int key)
@@ -64,24 +96,9 @@ struct node* insert(struct node* node, int key)
         node->size++;
         node->right = insert(node->right, key);
     }
-
+    searchPathSizeCheck(node, key);
     // Return the node pointer
     return node;
-}
-
-// C function to search a given key in a given BST
-struct node* search(struct node* root, int key)
-{
-    // Base Cases: root is null or key is present at root
-    if (root == NULL || root->key == key)
-        return root;
-
-    // Key is greater than root's key
-    if (root->key < key)
-        return search(root->right, key);
-
-    // Key is smaller than root's key
-    return search(root->left, key);
 }
 
 // Function to do inorder traversal of BST, printing key and size at each node
@@ -140,12 +157,7 @@ int main()
 
     cout << "Current c value: " << c << endl;
     inorderPrint(root);
-    // test samples of size check
-    sizeCheck(search(root, 50));
-    sizeCheck(search(root, 20));
-    sizeCheck(search(root, 70));
-    sizeCheck(search(root, 12));
+    // test samples of search size check
+    searchPathSizeCheck(root, 110);
     return 0;
 }
-
-// This code is contributed by shubhamsingh10
