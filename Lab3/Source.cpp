@@ -26,11 +26,29 @@ struct node* newNode(int item)
     return temp;
 }
 
+// checks if given node x has either child too big, and returns either true or false
+bool sizeCheck(struct node* x) {
+    if (x != nullptr) {
+        cout << "Inspecting node with key value " << x->key << endl;
+        if (x->left != nullptr && x->left->size > (c * x->size)) {
+            cout << "Left child subtree at node value " << x->left->key << " is too big!" << endl;
+            return true;
+        }
+        if (x->right != nullptr && x->right->size > (c * x->size)) {
+            cout << "Right child subtree at node value " << x->right->key << " is too big!" << endl;
+            return true;
+        }
+        else {
+            cout << "All good here" << endl;
+            return false;
+        }
+    }
+}
+
 // Function to insert a new node with
 // given key in BST
 struct node* insert(struct node* node, int key)
 {
-
     // If the tree is empty, return a new node
     if (node == NULL)
         return newNode(key);
@@ -51,6 +69,21 @@ struct node* insert(struct node* node, int key)
     return node;
 }
 
+// C function to search a given key in a given BST
+struct node* search(struct node* root, int key)
+{
+    // Base Cases: root is null or key is present at root
+    if (root == NULL || root->key == key)
+        return root;
+
+    // Key is greater than root's key
+    if (root->key < key)
+        return search(root->right, key);
+
+    // Key is smaller than root's key
+    return search(root->left, key);
+}
+
 // Function to do inorder traversal of BST, printing key and size at each node
 void inorderPrint(struct node* root)
 {
@@ -62,21 +95,6 @@ void inorderPrint(struct node* root)
     }
 }
 
-bool sizeCheck(struct node* x) { // checks if given node x has either child too big, and returns either true or false
-    cout << "Inspecting node with key value " << x->key << endl;
-    if (x->left->size > (c * x->size)) {
-        cout << "Left child subtree at node value " << x->left->key << " is too big!" << endl;
-        return true;
-    }
-    if (x->right->size > (c * x->size)) {
-        cout << "Right child subtree at node value " << x->right->key << " is too big!" << endl;
-        return true;
-    }
-    else {
-        cout << "All good here" << endl;
-        return false;
-    }
-}
 
 // Driver Code
 int main()
@@ -123,9 +141,10 @@ int main()
     cout << "Current c value: " << c << endl;
     inorderPrint(root);
     // test samples of size check
-    sizeCheck(root);
-    sizeCheck(root->right);
-    sizeCheck(root->left->left);
+    sizeCheck(search(root, 50));
+    sizeCheck(search(root, 20));
+    sizeCheck(search(root, 70));
+    sizeCheck(search(root, 12));
     return 0;
 }
 
