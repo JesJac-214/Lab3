@@ -4,6 +4,7 @@
 // in a BST
 #include <iostream>
 #include <cmath>
+#include <vector>
 using namespace std;
 
 double c = 0.55;
@@ -45,6 +46,55 @@ bool sizeCheck(struct node* x) {
     }
 }
 
+// Taken from https://www.geeksforgeeks.org/convert-normal-bst-balanced-bst/
+/* This function traverse the skewed binary tree and
+   stores its nodes pointers in vector nodes[] */
+void storeBSTNodes(node* root, vector<node*>& nodes)
+{
+    // Base case
+    if (root == NULL)
+        return;
+
+    // Store nodes in Inorder (which is sorted
+    // order for BST)
+    storeBSTNodes(root->left, nodes);
+    nodes.push_back(root);
+    storeBSTNodes(root->right, nodes);
+}
+
+/* Recursive function to construct binary tree */
+node* buildTreeUtil(vector<node*>& nodes, int start, int end)
+{
+    // base case
+    if (start > end)
+        return NULL;
+
+    /* Get the middle element and make it root */
+    int mid = (start + end) / 2;
+    node* root = nodes[mid];
+
+    /* Using index in Inorder traversal, construct
+       left and right subtress */
+    root->left = buildTreeUtil(nodes, start, mid - 1);
+    root->right = buildTreeUtil(nodes, mid + 1, end);
+
+    return root;
+}
+
+// This functions converts an unbalanced BST to
+// a balanced BST
+node* buildTree(node* root)
+{
+    // Store nodes of given BST in sorted order
+    vector<node*> nodes;
+    storeBSTNodes(root, nodes);
+
+    // Constructs BST from nodes[]
+    int n = nodes.size();
+    return buildTreeUtil(nodes, 0, n - 1);
+}
+
+
 // Taken from https://www.geeksforgeeks.org/binary-search-tree-set-1-search-and-insertion/
 // C function to search a given key in a given BST
 struct node* search(struct node* root, int key)
@@ -64,7 +114,9 @@ struct node* search(struct node* root, int key)
 //copy of search with sizeCheck in it, for use when inspecting an insertion path by searching for the newly inserted key
 struct node* searchPathSizeCheck(struct node* root, int key)
 {
-    sizeCheck(root);
+    if(sizeCheck(root)){
+        buildTree(root);
+    }
     // Base Cases: root is null or key is present at root
     if (root == NULL || root->key == key)
         return root;
@@ -96,7 +148,6 @@ struct node* insert(struct node* node, int key)
         node->size++;
         node->right = insert(node->right, key);
     }
-    searchPathSizeCheck(node, key);
     // Return the node pointer
     return node;
 }
@@ -159,5 +210,6 @@ int main()
     inorderPrint(root);
     // test samples of search size check
     searchPathSizeCheck(root, 110);
+    inorderPrint(root);
     return 0;
 }
