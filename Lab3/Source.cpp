@@ -13,7 +13,6 @@ double c = 0.55;
 struct node
 {
     int key;
-    int size;
     struct node* left, * right;
 };
 
@@ -22,20 +21,32 @@ struct node* newNode(int item)
 {
     struct node* temp = (struct node*)malloc(sizeof(struct node));
     temp->key = item;
-    temp->size = 1;
     temp->left = temp->right = NULL;
     return temp;
+}
+
+// Recursive function to calculate the size of a given binary tree
+int size(node* root)
+{
+    // base case: empty tree has size 0
+    if (root == nullptr) {
+        return 0;
+    }
+
+    // recursively calculate the size of the left and right subtrees and
+    // return the sum of their sizes + 1 (for root node)
+    return size(root->left) + 1 + size(root->right);
 }
 
 // checks if given node x has either child too big, and returns either true or false
 bool sizeCheck(struct node* x) {
     if (x != nullptr) {
         cout << "Inspecting node with key value " << x->key << endl;
-        if (x->left != nullptr && x->left->size > (c * x->size)) {
+        if (x->left != nullptr && size(x->left) > (c * size(x))) {
             cout << "Left child subtree at node value " << x->left->key << " is too big!" << endl;
             return true;
         }
-        if (x->right != nullptr && x->right->size > (c * x->size)) {
+        if (x->right != nullptr && size(x->right) > (c * size(x))) {
             cout << "Right child subtree at node value " << x->right->key << " is too big!" << endl;
             return true;
         }
@@ -115,7 +126,8 @@ struct node* search(struct node* root, int key)
 struct node* searchPathSizeCheck(struct node* root, int key)
 {
     if(sizeCheck(root)){
-        buildTree(root);
+        root = buildTree(root); // cuts the branch of and fixes it up, but doesn't glue it back
+        return root;
     }
     // Base Cases: root is null or key is present at root
     if (root == NULL || root->key == key)
@@ -140,12 +152,10 @@ struct node* insert(struct node* node, int key)
     // Otherwise, recur down the tree
     if (key < node->key)
     {
-        node->size++;
         node->left = insert(node->left, key);
     }
     else if (key > node->key)
     {
-        node->size++;
         node->right = insert(node->right, key);
     }
     // Return the node pointer
@@ -158,7 +168,7 @@ void inorderPrint(struct node* root)
     if (root != NULL)
     {
         inorderPrint(root->left);
-        cout << "key: " << root->key << " size: " << root->size << endl;
+        cout << "key: " << root->key << " size: " << size(root) << endl;
         inorderPrint(root->right);
     }
 }
@@ -211,5 +221,7 @@ int main()
     // test samples of search size check
     searchPathSizeCheck(root, 110);
     inorderPrint(root);
+    sizeCheck(root);
+    sizeCheck(search(root, 90));
     return 0;
 }
