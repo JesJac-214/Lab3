@@ -25,7 +25,7 @@ struct node* newNode(int item)
     return temp;
 }
 
-// Recursive function to calculate the size of a given binary tree
+// Recursive function to calculate the size of a given binary tree | from https://www.techiedelight.com/find-size-largest-bst-in-binary-tree/#:~:text=A%20simple%20solution%20is%20to%20traverse%20the%20binary,BST%20returned%20by%20the%20left%20and%20right%20subtrees.
 int size(node* root)
 {
     // base case: empty tree has size 0
@@ -122,11 +122,11 @@ struct node* search(struct node* root, int key)
     return search(root->left, key);
 }
 
-//copy of search with sizeCheck in it, for use when inspecting an insertion path by searching for the newly inserted key
+// copy of search with sizeCheck in it, for use when inspecting an insertion path by 
+// searching for the newly inserted key and returning early if a faulty node is found
 struct node* searchPathSizeCheck(struct node* root, int key)
 {
     if(sizeCheck(root)){
-        root = buildTree(root); // cuts the branch of and fixes it up, but doesn't glue it back
         return root;
     }
     // Base Cases: root is null or key is present at root
@@ -218,10 +218,11 @@ int main()
 
     cout << "Current c value: " << c << endl;
     inorderPrint(root);
-    // test samples of search size check
-    searchPathSizeCheck(root, 110);
+    // testing area
+    root->right = buildTree(searchPathSizeCheck(root, 110));
+    //don't know how to automate the replacement of the specified node x
+    //in this case manually assigned to root->right as it is known to be shitty
     inorderPrint(root);
-    sizeCheck(root);
-    sizeCheck(search(root, 90));
+    sizeCheck(root->right);
     return 0;
 }
