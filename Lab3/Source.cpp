@@ -124,9 +124,10 @@ struct node* search(struct node* root, int key)
 
 // copy of search with sizeCheck in it, for use when inspecting an insertion path by 
 // searching for the newly inserted key and returning early if a faulty node is found
-struct node* searchPathSizeCheck(struct node* root, int key)
+node* searchPathSizeCheck(node* root, int key)
 {
     if(sizeCheck(root)){
+        root = buildTree(root);
         return root;
     }
     // Base Cases: root is null or key is present at root
@@ -219,7 +220,18 @@ int main()
     cout << "Current c value: " << c << endl;
     inorderPrint(root);
     // testing area
-    root->right = buildTree(searchPathSizeCheck(root, 110));
+    //searchPathSizeCheck(root, 5);
+    node* x = root;
+    while (!sizeCheck(x)) {
+        if (x->key > 5) {
+            x = x->left;
+        }
+        else {
+            x = x->right;
+        }
+    }
+    x = buildTree(x);
+    inorderPrint(x);
     //don't know how to automate the replacement of the specified node x
     //in this case manually assigned to root->right as it is known to be shitty
     inorderPrint(root);
