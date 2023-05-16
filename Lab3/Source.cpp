@@ -220,20 +220,10 @@ int main()
     cout << "Current c value: " << c << endl;
     inorderPrint(root);
     // testing area
-    //searchPathSizeCheck(root, 5);
-    node* x = root;
-    while (!sizeCheck(x)) {
-        if (x->key > 5) {
-            x = x->left;
-        }
-        else {
-            x = x->right;
-        }
-    }
-    x = buildTree(x);
-    inorderPrint(x);
-    //don't know how to automate the replacement of the specified node x
-    //in this case manually assigned to root->right as it is known to be shitty
+    root->left = searchPathSizeCheck(root, 10);
+    // don't know how to automate the process of finding which node to assign the output
+    // of the sPSZ function to, in this case manually assigned to root->left as it is
+    // known to react there when traversing the path towards 10
     inorderPrint(root);
     sizeCheck(root->right);
     return 0;
