@@ -221,7 +221,7 @@ int main()
         }
         i++;
     }
-
+// example of manual insertion and checks
 /*    // Inserting value 50
     root = insert(root, 50);
     searchPathSizeCheck(root, 50);
