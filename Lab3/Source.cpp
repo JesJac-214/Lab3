@@ -7,7 +7,7 @@
 #include <vector>
 using namespace std;
 
-double c = 0.55;
+double c = 0.75;
 
 // Given Node
 struct node
@@ -17,7 +17,7 @@ struct node
 };
 
 // Function to create a new BST node
-struct node* newNode(int item)
+node* newNode(int item)
 {
     struct node* temp = (struct node*)malloc(sizeof(struct node));
     temp->key = item;
@@ -38,22 +38,26 @@ int size(node* root)
     return size(root->left) + 1 + size(root->right);
 }
 
-// checks if given node x has either child too big, and returns either true or false
+// checks if given node x has either child too big, and returns either true if so, else false
 bool sizeCheck(struct node* x) {
     if (x != nullptr) {
-        cout << "Inspecting node with key value " << x->key << endl;
+        //cout << "Inspecting node with key value " << x->key << endl;
         if (x->left != nullptr && size(x->left) > (c * size(x))) {
-            cout << "Left child subtree at node value " << x->left->key << " is too big!" << endl;
+            //cout << "Left child subtree at node value " << x->left->key << " is too big!" << endl;
             return true;
         }
         if (x->right != nullptr && size(x->right) > (c * size(x))) {
-            cout << "Right child subtree at node value " << x->right->key << " is too big!" << endl;
+            //cout << "Right child subtree at node value " << x->right->key << " is too big!" << endl;
             return true;
         }
         else {
-            cout << "All good here" << endl;
+            //cout << "All good here" << endl;
             return false;
         }
+    }
+    else {
+        //cout << "No such node" << endl;
+        return false;
     }
 }
 
@@ -108,7 +112,7 @@ node* buildTree(node* root)
 
 // Taken from https://www.geeksforgeeks.org/binary-search-tree-set-1-search-and-insertion/
 // C function to search a given key in a given BST
-struct node* search(struct node* root, int key)
+node* search(node* root, int key)
 {
     // Base Cases: root is null or key is present at root
     if (root == NULL || root->key == key)
@@ -122,12 +126,22 @@ struct node* search(struct node* root, int key)
     return search(root->left, key);
 }
 
+void childCheck(node* x) {
+    if (sizeCheck(x->left)) {
+        x->left = buildTree(x->left);
+    }
+    if (sizeCheck(x->right)) {
+        x->right = buildTree(x->right);
+    }
+}
+
 // copy of search with sizeCheck in it, for use when inspecting an insertion path by 
-// searching for the newly inserted key and returning early if a faulty node is found
+// searching for the newly inserted key and scanning each node along the path for if
+// their children are naughty and need to be checked.
 node* searchPathSizeCheck(node* root, int key)
 {
-    if(sizeCheck(root)){
-        root = buildTree(root);
+    if(sizeCheck(root->left) || sizeCheck(root->right)){
+        childCheck(root);
         return root;
     }
     // Base Cases: root is null or key is present at root
@@ -139,12 +153,14 @@ node* searchPathSizeCheck(node* root, int key)
         return searchPathSizeCheck(root->right, key);
 
     // Key is smaller than root's key
-    return searchPathSizeCheck(root->left, key);
+    if (root->key > key) {
+        return searchPathSizeCheck(root->left, key);
+    }
 }
 
 // Function to insert a new node with
 // given key in BST
-struct node* insert(struct node* node, int key)
+node* insert(node* node, int key)
 {
     // If the tree is empty, return a new node
     if (node == NULL)
@@ -186,45 +202,71 @@ int main()
          /  \    /  \
        20   40  60   80
    */
-    struct node* root = NULL;
+    node* root = NULL;
+    srand(time(0));
+    int firstNum = rand() % 100;
+    cout << "inserting random number 1: " << firstNum << endl;
+    root = insert(root, firstNum);
 
-    // Inserting value 50
+    int i = 0;
+    while (i < 299){
+        int x = rand() % 10000;
+        cout << "inserting random number " << i + 2 << ": " << x << endl;
+        insert(root, x);
+        if(sizeCheck(root)){
+            root = buildTree(root);
+        }
+        else {
+            searchPathSizeCheck(root, x);
+        }
+        i++;
+    }
+
+/*    // Inserting value 50
     root = insert(root, 50);
+    searchPathSizeCheck(root, 50);
 
     // Inserting value 30
     insert(root, 30);
+    searchPathSizeCheck(root, 30);
 
     // Inserting value 20
     insert(root, 20);
+    searchPathSizeCheck(root, 20);
 
     // Inserting value 40
     insert(root, 40);
+    searchPathSizeCheck(root, 40);
 
     // Inserting value 70
     insert(root, 70);
+    searchPathSizeCheck(root, 70);
 
     // Inserting value 60
     insert(root, 60);
+    searchPathSizeCheck(root, 60);
 
     // Inserting value 80
     insert(root, 80);
+    searchPathSizeCheck(root, 80);
 
     //inserting even more shit
     insert(root, 90);
+    searchPathSizeCheck(root, 90);
     insert(root, 100);
+    searchPathSizeCheck(root, 100);
     insert(root, 110);
+    searchPathSizeCheck(root, 110);
     insert(root, 5);
+    searchPathSizeCheck(root, 5);
     insert(root, 105);
+    searchPathSizeCheck(root, 105);
     insert(root, 10);
+    searchPathSizeCheck(root, 10); */
 
+    cout << endl;
     cout << "Current c value: " << c << endl;
+    cout << endl;
     inorderPrint(root);
-    // testing area
-    root->left = searchPathSizeCheck(root, 10);
-    // don't know how to automate the process of finding which node to assign the output
-    // of the sPSZ function to, in this case manually assigned to root->left as it is
-    // known to react there when traversing the path towards 10
-    inorderPrint(root);
-    sizeCheck(root->right);
     return 0;
 }
